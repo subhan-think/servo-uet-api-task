@@ -12,13 +12,14 @@ function BasicCard({
   details: { createdDate, name, _id, fName },
   makeLink,
   id,
+  imgSrc,
 }) {
   return (
     <Card sx={{ minWidth: 275 }}>
       <CardMedia
         component="img"
         height="194"
-        image="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=880&q=80"
+        image={`https://84f2-45-140-185-103.eu.ngrok.io/api/getfile${imgSrc}`}
         alt="Paella dish"
       />
       <CardContent>

@@ -73,7 +73,11 @@ function DisplayServices() {
         }}
       >
         {categoryData ? (
-          <BasicCard details={categoryData} makeLink={false}></BasicCard>
+          <BasicCard
+            details={categoryData}
+            makeLink={false}
+            imgSrc={categoryData.image}
+          ></BasicCard>
         ) : (
           <div>data is not found</div>
         )}
@@ -96,6 +100,7 @@ function DisplayServices() {
                 makeLink={true}
                 key={index}
                 id={categoryData._id}
+                imgSrc={item.images[0]}
               />
             );
           })}

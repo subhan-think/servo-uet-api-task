@@ -57,7 +57,11 @@ const CategorieAndSubCategories = () => {
         }}
       >
         {categoryData ? (
-          <BasicCard details={categoryData} makeLink={false}></BasicCard>
+          <BasicCard
+            details={categoryData}
+            makeLink={false}
+            imgSrc={categoryData.image}
+          ></BasicCard>
         ) : (
           <div>data is not found</div>
         )}
@@ -80,6 +84,7 @@ const CategorieAndSubCategories = () => {
                 makeLink={true}
                 key={index}
                 id={categoryData._id}
+                imgSrc={categoryData.image}
               />
             );
           })}
