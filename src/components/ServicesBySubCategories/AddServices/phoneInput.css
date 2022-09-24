@@ -1,0 +1,29 @@
+.PhoneInputInput {
+  flex: 0 1 !important;
+  min-width: auto !important;
+  border: none;
+  border-bottom: 1.5px solid rgb(133, 133, 133);
+  font-size: 16px;
+  font-family: Poppins;
+}
+/* ===== Scrollbar CSS ===== */
+/* Firefox */
+.scroll-custom {
+  scrollbar-width: thin;
+  scrollbar-color: #4a4a4a #ffffff;
+}
+
+/* Chrome, Edge, and Safari */
+.scroll-custom::-webkit-scrollbar {
+  width: 5px;
+}
+
+.scroll-custom::-webkit-scrollbar-track {
+  background: #ffffff;
+}
+
+.scroll-custom::-webkit-scrollbar-thumb {
+  background-color: #4a4a4a;
+  border-radius: 8px;
+  border: 0px solid #000000;
+}
