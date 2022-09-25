@@ -17,6 +17,11 @@ const Home = () => {
           See service Categories
         </MainButtonStyled>
       </Link>
+      <br />
+      <Link to={"/services"} style={{ textDecoration: "none" }}>
+        {" "}
+        <MainButtonStyled variant="contained">add Service</MainButtonStyled>
+      </Link>
     </HomeWrapperStyled>
   );
 };

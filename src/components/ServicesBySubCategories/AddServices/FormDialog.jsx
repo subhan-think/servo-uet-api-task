@@ -6,7 +6,7 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import { useTheme, useMediaQuery, Typography } from "@mui/material";
-// import Input from "@mui/material/Input";
+import Input from "@mui/material/Input";
 import Stack from "@mui/material/Stack";
 import SelectInput from "./SelectInput";
 import InputLabel from "@mui/material/InputLabel";
@@ -15,7 +15,11 @@ import FormControlWrapper from "./FormControlWrapper";
 import "./phoneInput.css";
 import PhoneInput from "react-phone-number-input";
 import "react-phone-number-input/style.css";
-import { useForm, Controller } from "react-hook-form";
+import {
+  useForm,
+  Controller,
+  // useController
+} from "react-hook-form";
 import Alert from "@mui/material/Alert";
 import { useState, useEffect } from "react";
 import { API_BASE_URL, getObjectFetch } from "../../../api";
@@ -29,9 +33,12 @@ export default function FormDialog() {
     control,
     reset,
     // getValues,
+    // register,
   } = useForm();
-  const onSubmit = (data) => {
+  const onSubmit = (data, e) => {
     console.log("form data", data);
+    data.files = e.target.files.files;
+    console.log(data);
 
     reset();
   };
@@ -40,6 +47,30 @@ export default function FormDialog() {
 
   const [subCategoryData, setSubCategoryData] = useState(false);
   const [open, setOpen] = useState(false);
+  const [images, setImages] = useState({
+    images1: "",
+    images2: "",
+  });
+
+  // useEffect(() => {
+  //   if (!value) {
+  //     setPreview(undefined);
+  //     return;
+  //   }
+  //   let setimagesPreview = async () => {
+  //     let setInPreviewArray = await value.map((item, index) => {
+  //       const objectUrl = URL.createObjectURL(value[0]);
+  //       return objectUrl;
+  //     });
+
+  //     setPreview(setInPreviewArray);
+  //     console.log(value, setInPreviewArray, preview);
+  //   };
+  //   setimagesPreview();
+  //   // free memory when ever this component is unmounted
+  //   // return () => URL.revokeObjectURL(objectUrl);
+  // }, [value]);
+
   const { category } = watch();
   useEffect(() => {
     let fetchAllCategories = async () => {
@@ -79,7 +110,7 @@ export default function FormDialog() {
       }
     };
     fetchSubCategories();
-  }, [category]);
+  }, [category, allCategoriesData]);
 
   const theme = useTheme();
 
@@ -105,7 +136,12 @@ export default function FormDialog() {
       <Button variant="contained" onClick={handleClickOpen}>
         Add Services
       </Button>
-      <Dialog open={open} onClose={handleClose} fullScreen={isMobile}>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        fullScreen={isMobile}
+        maxWidth={"sm"}
+      >
         <DialogContent className="scroll-custom">
           <Typography variant="h3">Add Services</Typography>
           <DialogContentText>
@@ -176,7 +212,6 @@ export default function FormDialog() {
                   </Alert>
                 )}
               </Stack>
-
               <Controller
                 render={({ field, formState }) => (
                   <TextField
@@ -228,7 +263,6 @@ export default function FormDialog() {
                   </Alert>
                 )}
               </Stack>
-
               <Controller
                 render={({ field, formState }) => (
                   <PhoneInput
@@ -275,7 +309,6 @@ export default function FormDialog() {
                   </Alert>
                 )}
               </Stack>
-
               <Controller
                 render={({ field, formState }) => (
                   <TextField
@@ -290,10 +323,7 @@ export default function FormDialog() {
                     placeholder="Write about yourself"
                     type="text"
                     variant="filled"
-                    color="secondary"
-                    value={field.value}
-                    onChange={field.onChange}
-                    onBlur={field.onBlur}
+                    {...field}
                   />
                 )}
                 control={control}
@@ -333,7 +363,6 @@ export default function FormDialog() {
                     </Alert>
                   )}
               </Stack>
-
               <Controller
                 render={({ field, formState }) => (
                   <TextField
@@ -403,7 +432,6 @@ export default function FormDialog() {
                   </Alert>
                 )}
               </Stack>
-
               <FormControlWrapper>
                 <InputLabel id={`category-select-label`} color="secondary">
                   Category
@@ -448,58 +476,166 @@ export default function FormDialog() {
                     sx={{ padding: "0.6rem 0.8rem", color: "#c92522" }}
                     variant="string"
                   >
-                    Please Select a category that has a subcategory
+                    Select Category that has a sub category
                   </Alert>
                 )}
               </Stack>
+              {category && (
+                <>
+                  <FormControlWrapper>
+                    <InputLabel
+                      id={`subcategory-select-label`}
+                      color="secondary"
+                    >
+                      Subcategory
+                    </InputLabel>
 
-              <FormControlWrapper>
-                <InputLabel id={`subcategory-select-label`} color="secondary">
-                  Subcategory
-                </InputLabel>
-
-                <Controller
-                  render={({ field, formState }) => (
-                    <SelectInput
+                    <Controller
+                      render={({ field, formState }) => (
+                        <SelectInput
+                          name="subcategory"
+                          optionsData={
+                            subCategoryData ? subCategoryData : { doc: [] }
+                          }
+                          {...field}
+                          ref={null}
+                        />
+                      )}
+                      control={control}
                       name="subcategory"
-                      optionsData={
-                        subCategoryData ? subCategoryData : { doc: [] }
-                      }
-                      {...field}
-                      ref={null}
+                      defaultValue={""}
+                      rules={{
+                        required: true,
+
+                        //   maxLength: 3,
+                        minLength: 1,
+                        //   pattern: {
+                        //     // value: /^(|[1-9]\d*)(\.\d+)?$/,
+                        //     value: /^(?!0*(\.0+)?$)(\d+|\d*\.\d+)$/,
+                        //   },
+                      }}
                     />
-                  )}
-                  control={control}
-                  name="subcategory"
-                  defaultValue={""}
+                  </FormControlWrapper>
+
+                  <Stack sx={{ width: "100%" }} spacing={2}>
+                    {errors.subcategory &&
+                      errors.subcategory.type === "required" && (
+                        <Alert
+                          severity="error"
+                          sx={{ padding: "0.6rem 0.8rem", color: "#c92522" }}
+                          variant="string"
+                        >
+                          Sub Category is required try chossing a different
+                          category
+                        </Alert>
+                      )}
+                  </Stack>
+                </>
+              )}
+              <FormControlWrapper>
+                <Controller
                   rules={{
                     required: true,
 
-                    //   maxLength: 3,
-                    minLength: 1,
-                    //   pattern: {
-                    //     // value: /^(|[1-9]\d*)(\.\d+)?$/,
-                    //     value: /^(?!0*(\.0+)?$)(\d+|\d*\.\d+)$/,
-                    //   },
+                    validate: (value) => {
+                      let valuetoreturn = value.length > 3 ? false : true;
+                      return {
+                        value: valuetoreturn,
+                        message: "not more than 3 pictures",
+                      };
+                    },
                   }}
+                  name="images1"
+                  control={control}
+                  defaultValue=""
+                  render={({ field, fieldState }) => (
+                    <Input
+                      name="upload-photo"
+                      type="file"
+                      inputProps={{
+                        multiple: true,
+                        accept: "image/png , image/jpeg",
+                      }}
+                      {...field}
+                      value={images.images1}
+                      onChange={(e) => {
+                        setImages((prev) => {
+                          return { ...prev, images1: e.target.value };
+                        });
+                        field.onChange(e.target.files);
+                      }}
+                    />
+                  )}
                 />
               </FormControlWrapper>
               <Stack sx={{ width: "100%" }} spacing={2}>
-                {errors.subcategory && errors.subcategory.type === "required" && (
+                {errors.images1 && errors.images1.type === "required" && (
                   <Alert
                     severity="error"
                     sx={{ padding: "0.6rem 0.8rem", color: "#c92522" }}
                     variant="string"
                   >
-                    Sub Category is required try chossing a different category
+                    Required
                   </Alert>
                 )}
               </Stack>
 
-              <TextField name="upload-photo" type="file" accept={"image/*"} />
+              <FormControlWrapper>
+                <Controller
+                  rules={{
+                    required: true,
 
-              {/* <SelectInput></SelectInput> */}
+                    validate: (value) => {
+                      let valuetoreturn = value.length > 3 ? false : true;
+                      return {
+                        value: valuetoreturn,
+                        message: "not more than 3 pictures",
+                      };
+                    },
+                  }}
+                  name="images2"
+                  control={control}
+                  defaultValue=""
+                  render={({ field, fieldState }) => (
+                    <Input
+                      name="upload-photo"
+                      type="file"
+                      inputProps={{
+                        multiple: true,
+                        accept: "image/png , image/jpeg",
+                      }}
+                      {...field}
+                      value={images.images2}
+                      onChange={(e) => {
+                        setImages((prev) => {
+                          return { ...prev, images2: e.target.value };
+                        });
+                        field.onChange(e.target.files);
+                      }}
+                    />
+                  )}
+                />
+              </FormControlWrapper>
+              <Stack sx={{ width: "100%" }} spacing={2}>
+                {errors.images2 && errors.images2.type === "required" && (
+                  <Alert
+                    severity="error"
+                    sx={{ padding: "0.6rem 0.8rem", color: "#c92522" }}
+                    variant="string"
+                  >
+                    required
+                  </Alert>
+                )}
+              </Stack>
 
+              {/* <FileInput name="file" control={control} /> */}
+              {/* upload another
+              <input
+                type="file"
+                multiple={true}
+                accept="image/png , image/jpeg"
+                {...register("picture", { required: true })}
+              /> */}
               {/* <FormControl>
                 <InputLabel id="level-label">Level</InputLabel>
                 <Controller
@@ -516,6 +652,18 @@ export default function FormDialog() {
                 />
               </FormControl>
               {errors.level && <div>category is required</div>} */}
+              {/* {value && (
+                  <div style={{ display: "flex", gap: "8px" }}>
+                    {preview.map((item) => (
+                      <img
+                        src={item}
+                        alt="preview"
+                        width="20px"
+                        height={"25px"}
+                      />
+                    ))}
+                  </div>
+                )} */}
             </div>
 
             <Button variant="contained" type="submit">
@@ -531,3 +679,24 @@ export default function FormDialog() {
     </>
   );
 }
+
+// const FileInput = ({ control, name }) => {
+//   const { field } = useController({
+//     control,
+//     name,
+//     rules: { required: true },
+//     defaultValue: "",
+//   });
+//   const [value, setValue] = React.useState("");
+//   return (
+//     <input
+//       type="file"
+//       {...field}
+//       value={value}
+//       onChange={(e) => {
+//         setValue(e.target.value);
+//         field.onChange(e.target.files);
+//       }}
+//     />
+//   );
+// };
