@@ -35,22 +35,24 @@ export default function FormDialog() {
     // getValues,
     // register,
   } = useForm();
+  const [images, setImages] = useState({
+    images1: "",
+    images2: "",
+  });
   const onSubmit = (data, e) => {
     console.log("form data", data);
-    data.files = e.target.files.files;
     console.log(data);
-
     reset();
+    setImages({
+      images1: "",
+      images2: "",
+    });
   };
 
   const [allCategoriesData, setAllCategoriesData] = useState(false);
 
   const [subCategoryData, setSubCategoryData] = useState(false);
   const [open, setOpen] = useState(false);
-  const [images, setImages] = useState({
-    images1: "",
-    images2: "",
-  });
 
   // useEffect(() => {
   //   if (!value) {
