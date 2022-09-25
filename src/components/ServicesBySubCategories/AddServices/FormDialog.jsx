@@ -43,10 +43,6 @@ export default function FormDialog() {
     console.log("form data", data);
     console.log(data);
     reset();
-    setImages({
-      images1: "",
-      images2: "",
-    });
   };
 
   const [allCategoriesData, setAllCategoriesData] = useState(false);
